@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _username = value!;
                 },
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
@@ -54,7 +54,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 16.0),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Mental challenge'),
+                decoration:
+                    const InputDecoration(labelText: 'Mental challenge'),
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please enter your mental challenge';

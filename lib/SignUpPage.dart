@@ -3,9 +3,7 @@ import 'dart:io';
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mentalhealthcare/LoginPage.dart';
-import 'ProfilePage.dart';
 import 'auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -54,13 +52,17 @@ class _SignUpPageState extends State<SignUpPage> {
       // Save the other fields to Cloud Firestore
       String username = _usernameController.text;
       String email = _emailController.text;
+      final currentUser = FirebaseAuth.instance.currentUser;
       final userData = {
         'username': username,
         'email': email,
         'profile_pic': imageUrl,
       };
 
-      await FirebaseFirestore.instance.collection('users').add(userData);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .set(userData);
 
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(

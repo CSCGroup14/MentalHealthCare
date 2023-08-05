@@ -40,12 +40,13 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> savePost() async {
     final String comment = _commentController.text;
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      final String username = await getUsernameForOwnerID();
+    // ignore: no_leading_underscores_for_local_identifiers
+    final _currentUser = FirebaseAuth.instance.currentUser;
+    if (_currentUser != null) {
+      final String username = await getUsernameForOwnerID(_currentUser.uid);
 
       final post = Post(
-        ownerID: currentUser.uid,
+        ownerID: _currentUser.uid,
         comment: comment,
         timestamp: Timestamp.now(),
         username: username,
@@ -68,10 +69,12 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Future<String> getUsernameForOwnerID() async {
+  Future<String> getUsernameForOwnerID(String ownerid) async {
     try {
-      final userSnapshot =
-          await FirebaseFirestore.instance.collection('users').doc().get();
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(ownerid)
+          .get();
 
       if (userSnapshot.exists) {
         return userSnapshot.data()!['username'];
@@ -128,18 +131,39 @@ class _MainPageState extends State<MainPage> {
             if (posts == null || posts.isEmpty) {
               return const Text('No posts available');
             }
-            return Column(children: [
+            return Column(mainAxisSize: MainAxisSize.min, children: [
               Expanded(
-                  child: Card(
+                child: Card(
                 child: ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
                     final post = posts[index];
 
                     return ListTile(
-                      title: Text(post.comment),
-                      subtitle: Text(
-                          'Posted by: ${post.username}'), // Display the username
+                      //           leading: CircleAvatar(
+                      //   radius: 20.0,
+                      //   child:  Container(
+                      //     decoration: BoxDecoration(
+                      //       shape: BoxShape.circle,
+                      //       image:  DecorationImage(
+                      //         image:  NetworkImage(image),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      title: Text('${post.username}',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Row(
+                        children: [
+                          Text("${post.timestamp.toDate(minutes)}"),
+                          const Icon(
+                            Icons.public,
+                            size: 15.0,
+                          )
+                        ],
+                      ),
+                      // trailing: Text(post.comment),
+                      // Display the username
                     );
                   },
                 ),
