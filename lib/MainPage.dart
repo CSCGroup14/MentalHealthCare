@@ -155,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Row(
                         children: [
-                          Text("${post.timestamp.toDate(minutes)}"),
+                          Text("${post.timestamp.toDate()}"),
                           const Icon(
                             Icons.public,
                             size: 15.0,
