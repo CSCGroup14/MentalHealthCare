@@ -29,9 +29,12 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'user-not-found') {
+          // ignore: avoid_print
           print('No user found for that email.');
+          const SnackBar(content: Text('No user found for that email'));
         } else if (e.code == 'wrong-password') {
           print('Wrong password provided for that user.');
+          const SnackBar(content: Text('Wrong password provided for that user.'));
         }
       });
     }
@@ -40,34 +43,27 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login Screen")),
+      appBar: AppBar(title: const Text("Login Page")),
       body: Padding(
           padding: const EdgeInsets.all(10),
           child: ListView(
             children: <Widget>[
-              Container(
-                  alignment: Alignment.center,
+              
+              Center(
+                child: Container(
                   padding: const EdgeInsets.all(10),
-                  child: const Text(
-                    'Login Page',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 30),
-                  )),
-              Container(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  controller: emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter your email";
-                    }
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Email',
+                  child: TextFormField(
+                    controller: emailController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter your email";
+                      }
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Email',
+                    ),
                   ),
                 ),
               ),

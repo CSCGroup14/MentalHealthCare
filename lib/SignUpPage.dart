@@ -79,8 +79,11 @@ class _SignUpPageState extends State<SignUpPage> {
       setState(() {
         if (e.code == 'weak-password') {
           print('The password provided is too weak.');
+          const SnackBar(content: Text('The password provided is too weak.'));
+
         } else if (e.code == 'email-already-in-use') {
           print('The account already exists for that email.');
+          const SnackBar(content: Text('The account already exists for that email.'));
         }
       });
     }
