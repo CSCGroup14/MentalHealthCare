@@ -75,15 +75,22 @@ class _SignUpPageState extends State<SignUpPage> {
     try {
       await Auth().createUserWithEmailAndPassword(
           email: _emailController.text, password: _passwordController.text);
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'weak-password') {
-          print('The password provided is too weak.');
-          const SnackBar(content: Text('The password provided is too weak.'));
-
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.code)));
         } else if (e.code == 'email-already-in-use') {
           print('The account already exists for that email.');
-          const SnackBar(content: Text('The account already exists for that email.'));
+           ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.code)));
         }
       });
     }
@@ -180,11 +187,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     createUserWithEmailAndPassword();
                     _saveDataToFirestore();
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
+                    
                   },
                 )),
             Row(

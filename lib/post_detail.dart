@@ -89,11 +89,11 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      resizeToAvoidBottomInset: false,
+      
     appBar: AppBar(title: const Text("Comments Page")),
     body:SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      reverse: true,
+      physics:  const BouncingScrollPhysics(),
       child: Container(
                             decoration: BoxDecoration(
                             color: Colors.white,
@@ -139,7 +139,7 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                 
                                 ],
                               ),
-                              const SizedBox(width: 20.0),
+                              const SizedBox(width: 10.0),
                                   postdetail.postImage != null
                                       ? Container(padding: const EdgeInsets.all(5.0), width:300,height:300, child:Image.network(postdetail.postImage!,scale: 0.5,width: 100,height: 100,fit: BoxFit.cover,))
                                       : Text(                                                                    postdetail.comment??"",
@@ -156,12 +156,12 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                               children: [
                                                 Expanded(
                                                   child: TextFormField(
-                          controller: commentController1,
-                          decoration:  const InputDecoration(
-                            hintText: 'Write your comment...',
-                            ),
-                           autofocus: true,
-                          keyboardType: TextInputType.text,
+                                                      controller: commentController1,
+                                                      decoration:  const InputDecoration(
+                                                        hintText: 'Write your comment...',
+                                                        ),
+                                                       autofocus: true,
+                                                      keyboardType: TextInputType.text,
                                                   ),
                                                 ),
                                                 

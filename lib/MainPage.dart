@@ -140,6 +140,7 @@ Stream<List<Post>> fetchPostsStream() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(225, 247, 248, 248),
       appBar: AppBar(
         title: const Text("MainPage"),
