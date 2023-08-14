@@ -18,7 +18,7 @@ class Post {
     required this.timestamp,
     required this.username,
     required this.profileimage,
-    required this.postImage,
+    this.postImage,
     this.postid = "",
   });
 

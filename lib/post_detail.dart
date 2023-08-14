@@ -1,20 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mentalhealthcare/models/commentsmodel.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 
 import 'models/Posts.dart';
 
-class PostDetail extends StatelessWidget {
+class PostDetail extends StatefulWidget {
   final Post postdetail;
-   PostDetail({super.key, required this.postdetail});
+   const PostDetail({super.key, required this.postdetail});
 
+  @override
+  State<PostDetail> createState() => _PostDetailState();
+}
+
+class _PostDetailState extends State<PostDetail> {
 // late Post widget.postdetail;
-
+   bool hasOffensiveContent(String text) {
+    final filter = ProfanityFilter();
+    final filteredWords = filter.getAllProfanity(text);
+    // You can customize how you handle the filtered words if needed
+    return filteredWords.isNotEmpty;
+  }
 
 final TextEditingController commentController1 = TextEditingController();
+
   Future<void> saveComment() async {
     final String comment = commentController1.text;
     // ignore: no_leading_underscores_for_local_identifiers
@@ -25,18 +36,39 @@ final TextEditingController commentController1 = TextEditingController();
       
 
       // Upload the image to Firebase Storage and get the image URL
-
-      Comments commentsection = Comments(
+      if (hasOffensiveContent(comment) ) {
+        // Show an alert dialog to inform the user about offensive comment
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Offensive Content Detected'),
+              content: const Text('The comment contains offensive content and cannot be posted.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return; // Prevent the comment from being posted
+      }else{Comments commentsection = Comments(
        comment:comment,
        timestamp:Timestamp.now(),
        commenterUsername:commenterUsername,
       commenterprofileimage:commenterprofileimage,
       );
  final CollectionReference<Map<String, dynamic>> commentCollection =
-      FirebaseFirestore.instance.collection('posts/${postdetail.postid}/comments'); 
+      FirebaseFirestore.instance.collection('posts/${widget.postdetail.postid}/comments'); 
       
       await commentCollection.add(commentsection.toMap());
-      commentController1.clear();
+      commentController1.clear();}
+    
     }
   }
 
@@ -76,7 +108,7 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
 
   Stream<List<Comments>> fetchCommentStream() {
     final CollectionReference<Map<String, dynamic>> commentCollection =
-      FirebaseFirestore.instance.collection('posts/${postdetail.postid}/comments'); 
+      FirebaseFirestore.instance.collection('posts/${widget.postdetail.postid}/comments'); 
 
   return commentCollection
       .orderBy('timestamp', descending: true)
@@ -112,8 +144,8 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundImage: postdetail.profileimage != null
-                                        ? NetworkImage(postdetail.profileimage!)
+                                    backgroundImage: widget.postdetail.profileimage != null
+                                        ? NetworkImage(widget.postdetail.profileimage!)
                                             as ImageProvider
                                         : const AssetImage(
                                             'assets/profilepicicon.jpg',
@@ -123,14 +155,14 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                   Column(
                                     children: [
                                       Text(
-                                        '${postdetail.username}',
+                                        '${widget.postdetail.username}',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       Text(
                                         DateFormat('MMM d')
-                                            .format(postdetail.timestamp.toDate()),
+                                            .format(widget.postdetail.timestamp.toDate()),
                                         style:
                                             const TextStyle(color: Colors.grey),
                                       ),
@@ -140,9 +172,9 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                 ],
                               ),
                               const SizedBox(width: 10.0),
-                                  postdetail.postImage != null
-                                      ? Container(padding: const EdgeInsets.all(5.0), width:300,height:300, child:Image.network(postdetail.postImage!,scale: 0.5,width: 100,height: 100,fit: BoxFit.cover,))
-                                      : Text(                                                                    postdetail.comment??"",
+                                  widget.postdetail.postImage != null
+                                      ? Container(padding: const EdgeInsets.all(5.0), width:300,height:300, child:Image.network(widget.postdetail.postImage!,scale: 0.5,width: 100,height: 100,fit: BoxFit.cover,))
+                                      : Text(                                                                    widget.postdetail.comment??"",
                                    style: const TextStyle(fontSize: 16.0),
                                       ),
                           

@@ -49,6 +49,7 @@ dependencies:
   fluttertoast: ^8.2.2
   curved_navigation_bar: ^1.0.3
   intl: ^0.18.1
+  profanity_filter: ^2.0.0
 
 dev_dependencies:
   flutter_test:

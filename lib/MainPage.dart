@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mentalhealthcare/post_detail.dart';
+import 'package:profanity_filter/profanity_filter.dart';
 import 'dart:io';
 import 'models/Posts.dart';
 
@@ -23,6 +24,19 @@ class _MainPageState extends State<MainPage> {
   final TextEditingController _commentController = TextEditingController();
   final CollectionReference<Map<String, dynamic>> postsCollection =
       FirebaseFirestore.instance.collection('posts');
+
+      bool hasOffensiveContent(String text) {
+    final filter = ProfanityFilter();
+    return filter.hasProfanity(text);
+  }
+
+   bool hasViolenceWords(String text) {
+    final filter = ProfanityFilter();
+    final filteredWords = filter.getAllProfanity(text);
+    // You can customize how you handle the filtered words if needed
+    return filteredWords.isNotEmpty;
+  }
+
 
   //Image Picker
   Future<String?> getImage() async {
@@ -75,22 +89,46 @@ class _MainPageState extends State<MainPage> {
       final String username = await _getUsernameForOwnerID(_currentUser.uid);
       final String profileimage =
           await _getUserProfileImageURL(_currentUser.uid);
-      const String postImage = "";
+      // const String? postImage ;
 
       // Upload the image to Firebase Storage and get the image URL
-
-      Post post = Post(
+      if (hasOffensiveContent(comment) || hasViolenceWords(comment)) {
+        // Show an alert dialog to inform the user about offensive comment
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Offensive or Violence Content Detected'),
+              content: const Text('The comment contains offensive content and cannot be posted.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return; // Prevent the comment from being posted
+      }else {
+        Post post = Post(
         ownerID: _currentUser.uid,
         comment: comment,
         timestamp: Timestamp.now(),
         username: username,
         profileimage: profileimage,
-        postImage: postImage,
+        // postImage: postImage,
       );
 
       await postsCollection.add(post.toMap());
       _commentController.clear();
     }
+      }
+
+      
   }
 
   
@@ -165,14 +203,18 @@ Stream<List<Post>> fetchPostsStream() {
             mainAxisSize: MainAxisSize.min,
             children: [
               // ignore: avoid_unnecessary_containers
+              
               Container(
+                margin:const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
+                  
                   color: Colors.white,
                   border: Border.all(
-                    color: const Color.fromARGB(6, 247, 244, 244),
-                    width: 1.0,
+                    color: const Color.fromARGB(6, 10, 10, 10),
+                    width: 5.0,
                   ),
-                  borderRadius: BorderRadius.circular(1.0),
+                  borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: Row(
                   children: [
@@ -202,7 +244,6 @@ Stream<List<Post>> fetchPostsStream() {
                     itemCount: posts.length,
                     itemBuilder: (context, index) {
                       final post = posts[index];
-
                       return Container(
                         width: 200.0,
                         decoration: BoxDecoration(
@@ -262,26 +303,63 @@ Stream<List<Post>> fetchPostsStream() {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  IconButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    PostDetail(
-                                                        postdetail:
-                                                            post)));
-                                      },
-                                      icon: const Icon(
-                                        Icons.comment_outlined,
-                                        size: 20.0,
-                                      )
-                                      ),
+
+
+
+
+ ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetail(postdetail: post),
+      ),
+    );
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromARGB(255, 0, 5, 8),
+    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ), // Choose a color for the button
+  ),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: const[
+      const Icon(
+        Icons.add,
+        size: 20.0,
+        color: Colors.white, // Choose an appropriate color for the icon
+      ),
+      const SizedBox(width: 4.0),
+      Text(
+        'Comments',
+        style: TextStyle(
+          color: Colors.white, // Choose an appropriate color for the text
+        ),
+      ),
+    ],
+  ),
+)
+                                  // IconButton(
+                                  //     onPressed: () {
+                                  //       Navigator.push(
+                                  //           context,
+                                  //           MaterialPageRoute(
+                                  //               builder: (context) =>
+                                  //                   PostDetail(
+                                  //                       postdetail:
+                                  //                           post)));
+                                  //     },
+                                  //     icon: const Icon(
+                                  //       Icons.comment_outlined,
+                                  //       size: 20.0,
+                                  //     )
+                                  //     ),
                                   // IconButton(
                                   //   ,
                                   //
                                   // ),
-                                  SizedBox(width: 4.0),
+                                  // const SizedBox(width: 4.0),
                                 ]),
                           ],
                         ),
