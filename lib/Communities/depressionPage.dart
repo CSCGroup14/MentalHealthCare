@@ -7,23 +7,25 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mentalhealthcare/firebaseService.dart';
 import 'package:profanity_filter/profanity_filter.dart';
 import 'dart:io';
-import 'Widgets/PostScreen.dart';
-import 'models/Posts.dart';
+import '../Widgets/PostScreen.dart';
+import '../models/Posts.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+
+
+class DepressionPage extends StatefulWidget {
+  const DepressionPage({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _MainPageState createState() => _MainPageState();
+  _DepressionPageState createState() => _DepressionPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _DepressionPageState extends State<DepressionPage> {
   File? _image;
   final _imagePicker = ImagePicker();
   final TextEditingController _commentController = TextEditingController();
-  final CollectionReference<Map<String, dynamic>> postsCollection =
-      FirebaseFirestore.instance.collection('posts');
+  final CollectionReference<Map<String, dynamic>> postsCollection2 =
+      FirebaseFirestore.instance.collection('depression posts');
 
   bool hasOffensiveContent(String text) {
     final filter = ProfanityFilter();
@@ -71,7 +73,7 @@ class _MainPageState extends State<MainPage> {
         postImage: postimage,
       );
 
-      await postsCollection.add(post.toMap());
+      await postsCollection2.add(post.toMap());
       _commentController.clear();
     }
     return null;
@@ -118,14 +120,14 @@ class _MainPageState extends State<MainPage> {
           // postImage: postImage,
         );
 
-        await postsCollection.add(post.toMap());
+        await postsCollection2.add(post.toMap());
         _commentController.clear();
       }
     }
   }
 
   Stream<List<Post>> fetchPostsStream() {
-    return postsCollection
+    return postsCollection2
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((querySnapshot) {
@@ -141,67 +143,75 @@ class _MainPageState extends State<MainPage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(225, 247, 248, 248),
       appBar: AppBar(
-        title: const Text("MainPage"),
+        title: const Text("Depression Community"),
       ),
-      body: StreamBuilder<List<Post>>(
-        stream: fetchPostsStream(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final List<Post>? posts = snapshot.data;
-
-          if (posts == null || posts.isEmpty) {
-            return const Text('No posts available');
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // ignore: avoid_unnecessary_containers
-
-              Container(
-                margin: const EdgeInsets.all(5.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: const Color.fromARGB(6, 10, 10, 10),
-                    width: 5.0,
-                  ),
-                  borderRadius: BorderRadius.circular(50.0),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _commentController,
-                        decoration: const InputDecoration(
-                          hintText: 'What is on your mind...',
+      body: Column(
+        children: [
+          Container(
+                      margin: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: const Color.fromARGB(6, 10, 10, 10),
+                          width: 5.0,
                         ),
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _commentController,
+                              decoration: const InputDecoration(
+                                hintText: 'What is on your mind...',
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: getImage,
+                            icon: const Icon(Icons.image),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              savePost();
+                            },
+                            icon: const Icon(Icons.send),
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      onPressed: getImage,
-                      icon: const Icon(Icons.image),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        savePost();
-                      },
-                      icon: const Icon(Icons.send),
-                    ),
+
+        Flexible(
+            child: StreamBuilder<List<Post>>(
+              stream: fetchPostsStream(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+          
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+          
+                final List<Post>? posts = snapshot.data;
+          
+                if (posts == null || posts.isEmpty) {
+                  return const Text('No posts available');
+                }
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // ignore: avoid_unnecessary_containers
+          
+                    
+                    PostScreen(posts: posts),
                   ],
-                ),
-              ),
-              PostScreen(posts: posts),
-            ],
-          );
-        },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -19,15 +19,27 @@ class FirebaseService {
     return await ref.getDownloadURL();
   }
 
-  Future<void> saveComment(String comment) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      await usersCollection
-          .doc(currentUser.uid)
-          .collection('comments')
-          .add({'comment': comment, 'timestamp': FieldValue.serverTimestamp()});
+  Future<String> getUsernameForOwnerID(String ownerid) async {
+    try {
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(ownerid)
+          .get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot.data()!['username'];
+      }
+
+      return ''; // Return an empty string if the user does not exist
+    } catch (e) {
+      print('Error fetching username: $e');
+      return ''; // Return an empty string in case of an error
     }
   }
+
+
+
+
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getUserDataStream() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -36,4 +48,25 @@ class FirebaseService {
     }
     return const Stream.empty();
   }
+
+Future<String> getUserProfileImageURL(String ownerid) async {
+    try {
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(ownerid)
+          .get();
+      if (userSnapshot.exists) {
+        return userSnapshot.data()!['profile_pic'];
+      }
+      return ''; // Return an empty string if the user or profileImageURL does not exist
+    } catch (e) {
+      print('Error fetching user profile image URL: $e');
+      return ''; // Return an empty string in case of an error
+    }
+  }
+
+
+
+
+  
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mentalhealthcare/LoginPage.dart';
+import 'package:mentalhealthcare/quiz/quizmain.dart';
 import 'auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -78,7 +79,7 @@ class _SignUpPageState extends State<SignUpPage> {
           // ignore: use_build_context_synchronously
           Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
+                        builder: (context) => const Myquiz(),
                       ),
                     );
 

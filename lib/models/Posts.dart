@@ -41,7 +41,8 @@ class Post {
         username: map['username'],
         profileimage: map['profileimage'],
         postImage: map['postImage'],
-         postid:id);
+        postid:id
+         );
        
   }
 }

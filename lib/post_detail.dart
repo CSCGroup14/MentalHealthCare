@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mentalhealthcare/firebaseService.dart';
 import 'package:mentalhealthcare/models/commentsmodel.dart';
 import 'package:profanity_filter/profanity_filter.dart';
 
+import 'Widgets/PostDetailScreen.dart';
 import 'models/Posts.dart';
 
 class PostDetail extends StatefulWidget {
@@ -31,8 +33,8 @@ final TextEditingController commentController1 = TextEditingController();
     // ignore: no_leading_underscores_for_local_identifiers
     final _currentUser = FirebaseAuth.instance.currentUser;
     if (_currentUser != null) {
-      final String commenterUsername = await getUsernameForOwnerID1(_currentUser.uid);
-      final String commenterprofileimage = await getUserProfileImageURL1(_currentUser.uid);
+      final String commenterUsername = await FirebaseService().getUsernameForOwnerID(_currentUser.uid);
+      final String commenterprofileimage = await FirebaseService().getUserProfileImageURL(_currentUser.uid);
       
 
       // Upload the image to Firebase Storage and get the image URL
@@ -72,39 +74,7 @@ final TextEditingController commentController1 = TextEditingController();
     }
   }
 
-Future<String> getUsernameForOwnerID1(String ownerid) async {
-    try {
-      final userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(ownerid)
-          .get();
 
-      if (userSnapshot.exists) {
-        return userSnapshot.data()!['username'];
-      }
-
-      return ''; // Return an empty string if the user does not exist
-    } catch (e) {
-      print('Error fetching username: $e');
-      return ''; // Return an empty string in case of an error
-    }
-  }
-
-  Future<String> getUserProfileImageURL1(String ownerid) async {
-    try {
-      final userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(ownerid)
-          .get();
-      if (userSnapshot.exists) {
-        return userSnapshot.data()!['profile_pic'];
-      }
-      return ''; // Return an empty string if the user or profileImageURL does not exist
-    } catch (e) {
-      print('Error fetching user profile image URL: $e');
-      return ''; // Return an empty string in case of an error
-    }
-  }
 
   Stream<List<Comments>> fetchCommentStream() {
     final CollectionReference<Map<String, dynamic>> commentCollection =
@@ -178,12 +148,7 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                    style: const TextStyle(fontSize: 16.0),
                                       ),
                           
-                              // const SizedBox(height: 8.0),
-                              // Text(
-                              //   widget.postdetail.comment??"",
-                              //   style: const TextStyle(fontSize: 16.0),
-                              // ),
-                              const SizedBox(height: 4.0),
+                             const SizedBox(height: 4.0),
                               Row(
                                               children: [
                                                 Expanded(
@@ -237,71 +202,14 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
                                                   itemBuilder: (context, index) {
                           final commentsection1 = comments1[index];
                               
-                          return Container(
-                            
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: const Color.fromARGB(6, 0, 0, 0),
-                                width: 2.0,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundImage: commentsection1.commenterprofileimage != null
-                                          ? NetworkImage(commentsection1.commenterprofileimage!)
-                                              as ImageProvider
-                                          : const AssetImage(
-                                              'assets/profilepicicon.jpg',
-                                            ),
-                                      radius: 20.0,
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          commentsection1.commenterUsername??"",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          DateFormat('MMM d')
-                                              .format(commentsection1.timestamp.toDate()),
-                                          style:
-                                              const TextStyle(color: Colors.grey),
-                                        ),
-                                        
-                                      ],
-                                    ),
-                                    
-                                  ],
-                                ),
-                                const SizedBox(width: 20.0),
-                                     Text(
-                                  commentsection1.comment??"",
-                                  style: const TextStyle(fontSize: 16.0),
-                                ),
-                                const SizedBox(height: 8.0),
-                                                                                                
-                              ],
-                            ),
-                          );
+                          return PostDetailScreen(commentsection1: commentsection1);
                                                   },
                                                 ),
                                               ),
                                             ],
                                           );
-                                          
-                                        
-                                        
-                                        
-                                        },
+                                                                                                              
+                                          },
                                                
                                             ),
                                       ),
@@ -314,3 +222,5 @@ Future<String> getUsernameForOwnerID1(String ownerid) async {
     );
   }
 }
+
+
