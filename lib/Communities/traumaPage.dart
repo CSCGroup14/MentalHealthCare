@@ -25,7 +25,7 @@ class _TraumaPageState  extends State<TraumaPage> {
   final _imagePicker = ImagePicker();
   final TextEditingController _commentController = TextEditingController();
   final CollectionReference<Map<String, dynamic>> postsCollection3 =
-      FirebaseFirestore.instance.collection('depression posts');
+      FirebaseFirestore.instance.collection('trauma posts');
 
   bool hasOffensiveContent(String text) {
     final filter = ProfanityFilter();
@@ -148,8 +148,8 @@ class _TraumaPageState  extends State<TraumaPage> {
       body: Column(
         children: [
           Container(
-                      margin: const EdgeInsets.all(5.0),
-                      padding: const EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.all(3.0),
+                      padding: const EdgeInsets.all(5.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(

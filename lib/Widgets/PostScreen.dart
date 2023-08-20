@@ -16,23 +16,24 @@ class PostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Card(
-        elevation: 30.0,
-        child: ListView.builder(
-          itemCount: posts?.length,
-          itemBuilder: (context, index) {
-            final post = posts![index];
-            return Container(
-              width: 200.0,
+      child: ListView.builder(
+        itemCount: posts?.length,
+        itemBuilder: (context, index) {
+          final post = posts![index];
+          return Card(
+            elevation: 10.0,
+            child: Container(
+              margin: const EdgeInsets.all(5.0),
+              
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
-                  color: const Color.fromARGB(6, 0, 0, 0),
-                  width: 2.0,
+                  color: Colors.black,
+                  width: 1.0,
                 ),
-                borderRadius: BorderRadius.circular(5.0),
+                borderRadius: BorderRadius.circular(10.0),
               ),
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -130,9 +131,9 @@ class PostScreen extends StatelessWidget {
                       ]),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

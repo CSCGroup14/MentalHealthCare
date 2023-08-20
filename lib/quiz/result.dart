@@ -7,9 +7,10 @@ import '../Communities/depressionPage.dart';
 
 class Result extends StatelessWidget {
   final int resultScore;
-  // final Function resetHandler;
+  
+  final Function resetHandler;
 
-  const Result(this.resultScore, {super.key});
+  const Result(this.resultScore, this.resetHandler,{super.key});
 
   String get resultPhrase {
     String resultText;
@@ -52,7 +53,7 @@ class Result extends StatelessWidget {
           ),
           ElevatedButton(
             child: const Text(
-              'Restart Quiz!',
+              'Proceed',
             ),
             onPressed: () => navigateToNewScreen(context),
           ),

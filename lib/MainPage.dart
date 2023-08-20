@@ -141,7 +141,7 @@ class _MainPageState extends State<MainPage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(225, 247, 248, 248),
       appBar: AppBar(
-        title: const Text("MainPage"),
+        title: const Text("Stress Community"),
       ),
       body: StreamBuilder<List<Post>>(
         stream: fetchPostsStream(),

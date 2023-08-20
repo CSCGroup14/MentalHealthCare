@@ -7,10 +7,10 @@ class Myquiz extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _MyquizState createState() => _MyquizState();
+  MyquizState createState() => MyquizState();
 }
 
-class _MyquizState extends State<Myquiz> {
+class MyquizState extends State<Myquiz> {
   final _questions = const [
     {
       'questionText': 'How do u feel now?',
@@ -40,24 +40,31 @@ class _MyquizState extends State<Myquiz> {
       ],
     },
   ];
-  var _questionIndex = 0;
-  var _totalScore = 0;
+  var questionIndex = 0;
+  var totalScore = 0;
 
   
 
   void _answerQuestion(int score) {
-    _totalScore += score;
+    totalScore += score;
     setState(() {
-      _questionIndex = _questionIndex + 1;
+      questionIndex = questionIndex + 1;
     });
-    print(_questionIndex);
-    if (_questionIndex < _questions.length) {
+    print(questionIndex);
+    if (questionIndex < _questions.length) {
       // ignore: avoid_print
       print('We have more questions!');
     } else {
       // ignore: avoid_print
       print('No more questions!');
     }
+  }
+
+  void resetQuiz() {
+    setState(() {
+      questionIndex = 0;
+      totalScore = 0;
+    });
   }
 
   @override
@@ -67,13 +74,13 @@ class _MyquizState extends State<Myquiz> {
         appBar: AppBar(
           title: const Text('Mental Health Quiz'),
         ),
-        body: _questionIndex < _questions.length
+        body: questionIndex < _questions.length
             ? Quiz(
                 answerQuestion: _answerQuestion,
-                questionIndex: _questionIndex,
+                questionIndex: questionIndex,
                 questions: _questions,
               )
-            : Result(_totalScore),
+            : Result(totalScore,resetQuiz),
       );
     
   }

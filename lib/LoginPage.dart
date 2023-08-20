@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mentalhealthcare/HomePage.dart';
 import 'package:mentalhealthcare/MainPage.dart';
 import 'package:mentalhealthcare/SignUpPage.dart';
 import 'auth.dart';
@@ -24,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       // ignore: use_build_context_synchronously
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const MainPage(),
+          builder: (context) =>  HomePage(),
         ),
       );
     } on FirebaseAuthException catch (e) {
